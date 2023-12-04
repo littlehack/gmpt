@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: linear-gradient(to right, #3498db, #6dd5fa);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .login-container input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .login-container button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .login-container a {
+            text-decoration: none;
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        .login-container a:hover {
+            text-decoration: underline;
+        }
+        #error-message {
+            color: #ff3333;
+            margin-top: 10px;
+            background-color: #ffd4d4;
+        }
+    </style>
+    <title>国密算法平台</title>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="用户名" required>
+        <input type="password" id="password" placeholder="密码" required>
+        <button type="button" id="login"  onclick="submitForm()">Login</button>
+    </form>
+    <p>
+        <a href="#">忘记密码</a>
+        <span>|</span>
+        <a href="/register">注册</a>
+    </p>
+    <div id="error-message"></div>
+</div>
+<script>
+    function submitForm() {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        // 构建 JSON 对象
+        var data = {
+            username: username,
+            password: password
+        };
+
+        // 发送 JSON 数据
+        fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.msg === "success"){
+                    // 登录成功，跳转到后台页面
+                    window.location.href = '/login/SM2';
+                } else {
+                    // 登录失败，可以显示错误消息或采取其他操作
+                    document.getElementById("error-message").innerHTML="用户名或密码错误";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+</script>
+
+</body>
+</html>

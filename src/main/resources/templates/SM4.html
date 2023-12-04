@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>在线SM4国密加密/国密加解密平台</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Language" content="zh-CN">
+    <meta name="keywords" content="SM4加密,SM4解密,国密加密,国密解密,国密,SM2,SM1,SM3,SM4">
+    <meta name="description" content="在线SM4国密加密/解密">
+    <script src="../static/js/sweetalert2.all.min.js"></script>
+    <script type="text/javascript">
+        
+        window.toolId = '';
+        
+        window.loginUser = null;
+        
+        window.loadPageRecords = {};
+        
+        window.errorRecords = [];
+        
+        
+        window.errorRecord = function(errorInfo) {
+            errorRecords.push(errorInfo);
+        };
+        
+        window.loadPageRecords['START_LOAD_DOM'] = new Date();
+        
+                    
+                window.onerror = function (msg, url, line, col, error) {
+                    function getEd() {
+                        try {
+                            if (!window._edf) return "[NoneEdf]";
+                            return JSON.parse(JSON.stringify(window._edf.log()));
+                        } catch (e) {
+                            return "[EdfError]=>" + JSON.stringify(e);
+                        }
+                    }
+                    window.errorRecord({
+                        msg: msg,
+                        url: url,
+                        line: line,
+                        col: col,
+                        error: cvtError(error),
+                        viewUrl: window.location.href,
+                        ed: getEd()
+                    });
+                    return true;
+                }
+            
+        function cvtError(error) {
+            if (!error) return '';
+            if (typeof (error) == 'string') return error;
+            return {
+                description: error.description,
+                fileName: error.fileName,
+                lineNumber: error.lineNumber,
+                message: error.message,
+                name: error.name,
+                number: error.number,
+                stack: error.stack
+            };
+        }
+
+    </script>
+    
+    <style type="text/css">
+        .pr {
+            position: relative;
+        }
+
+        .text {
+            border-radius: 0 !important;
+            box-sizing: border-box;
+            display: block;
+            font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #333;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+            .text textarea {
+                width: 100% !important;
+                border: 1px solid #c6cede !important;
+                height: 300px;
+                font-size: 16px;
+            }
+
+            .text b {
+                color: #c0c1c4;
+                font-family: "Microsoft YaHei";
+                font-size: 14px;
+                font-weight: normal;
+                left: 13px;
+                letter-spacing: normal;
+                margin-top: 10px;
+                position: absolute;
+                top: 0;
+                z-index: 0;
+                font-size: 16px;
+            }
+
+        strong {
+            color: black;
+        }
+
+        .icon-bars:before, .icon-reorder:before {
+            content: '≡≡';
+        }
+
+        .resize-div {
+            width: 100%;
+            position: absolute;
+            background-color: #f6f6f6;
+            cursor: n-resize;
+            box-sizing: content-box;
+            -webkit-box-sizing: content-box;
+            text-align: center;
+            top: 100%;
+            border: 1px solid #ddd;
+            left: -1px;
+        }
+        .control-button {
+            width: 100%;
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 18px;
+            height: 35px;
+        }
+    </style>
+    
+    <style type="text/css">
+        .layui-table td {
+            text-align: center
+        }
+
+        .lable-title {
+            margin-bottom: 5px;
+        }
+
+        .setting label > select {
+            margin-top: 2px;
+        }
+    </style>
+
+
+    
+    <link href="../static/css/1.css" rel="stylesheet"/>
+
+</head>
+<body>
+
+        <div style="float: right;    padding-top: 20px;padding-right: 10px;">
+                <a style="z-index: 9999; cursor: pointer; color: rgba(255, 255, 255, .7);position: relative;" title="LZL在线工具:登录或注册账号" id="loginOrRegister">登录/注册</a>
+        </div>
+    </div>
+    
+    <div>
+        
+
+
+<div id="wrapper">
+    <div class="wrapper">
+        <div class="wrapper ad-wrap" style="margin-top: 15px"></div>
+        <div class="toolsTab  clearfix">
+            <ul class="nav nav-tabs">
+                <li >
+                    <a href="/login/SM2">SM2</a>
+                </li>
+                <li >
+                    <a href="/login/SM3">SM3</a>
+                </li>
+                <li class=active>
+                    <a href="/login/SM4">SM4</a>
+                </li>
+                <li >
+                    <a href="/login/DES">DES</a>
+                </li>
+                <li >
+                    <a href="/login/AES">AES</a>
+                </li>
+                <!-- <li >
+                    <a href="/TripleDES">TripleDES</a>
+                </li> -->
+            </ul>
+        </div>
+        
+
+
+<div class="layui-tab layui-tab-card" lay-filter="box">
+    <div class="layui-tab-content" style="display: flex">
+        <div style="width: 900px">
+            <b>加密/解密的内容：</b>
+            <textarea placeholder="请输入需要加密/解密的内容" style="margin: 0px 0px 20px; height: 120px; width: 95%; max-width: 95%; margin-top: 5px;" id="content"></textarea>
+            <div>
+                <label>
+                    <b style="display: block">密钥：</b>
+                    <input type="text" class="select-color" placeholder="密钥" style="width: 95%; cursor: text; margin-top: 5px;" id="sm4key" />
+                </label>
+                <label>
+                    <b style="display: block">IV：</b>
+                    <input type="text" class="select-color" placeholder="IV" style="width: 95%; cursor: text; margin-top: 5px;" id="iv" />
+                </label>
+                <label>
+                    <b>加密/解密结果：</b>
+                    <textarea placeholder="加密/解密结果" style="margin: 0px 0px 20px; height: 120px; width: 95%; max-width: 95%; cursor: text; margin-top: 5px;" id="result" readonly="readonly"></textarea>
+                </label>
+            </div>
+        </div>
+        <div style="width: 220px" class="setting">
+            <label>
+                <b>加密/解密的内容（数据格式）</b>
+                <select id="InputDataType">
+                    <option value="Text" selected="selected">文本（解密则为Base64）</option>
+                    <option value="Hex">Hex（十六进制）</option>
+                    <option value="Base64">Base64</option>
+                </select>
+            </label>
+            <label>
+                <b>加密/解密结果（数据格式）</b>
+                <select id="OutputDataType">
+                    <option value="Text" selected="selected">文本（加密则为Base64）</option>
+                    <option value="Hex">Hex（十六进制）</option>
+                    <option value="Base64">Base64</option>
+                </select>
+            </label>
+            <label>
+                <b>密钥/IV(数据格式)</b>
+                <select id="KeyIvDataType">
+                    <option value="Text">文本</option>
+                    <option value="Hex" selected="selected">Hex（十六进制）</option>
+                    <option value="Base64">Base64</option>
+                </select>
+            </label>
+        
+            <label>
+                <b>加密模式</b>
+                <select id="EncryptModel">
+                    <option value="ECB">ECB</option>
+                    <option value="CBC">CBC</option>
+                </select>
+            </label>
+            <div class="btn-box">
+                <button class="btn btn-primary control-button" id="encrypt" onclick="encryptSM4()">加密</button>
+                <button class="btn btn-primary control-button" id="decrypt" onclick="decryptSM4()">解密</button>
+                <button class="btn control-button" id="copy" onclick="copyText()">复制结果</button>
+                <button class="btn control-button" id="clear" onclick="clearText()">清空</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <script>
+            var option = document.getElementById("EncryptModel");
+            var modes = ""
+            window.onchange = function (){
+                modes = option.value;}
+            function encryptSM4(){
+                var content = document.getElementById("content").value;
+                var key = document.getElementById("sm4key").value;
+                var iv = document.getElementById("iv").value;
+                if(content === "" || key === "" || iv === ""){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '提醒',
+                        text: '数据不能为空',
+                        allowOutsideClick: true
+                    });
+                    return;
+                }
+                var endata = {
+                    plantext:content,
+                    key:key,
+                    iv:iv,
+                    mode:modes
+                };
+                fetch("/api/ensm4",{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify(endata),
+                    method:"POST"
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.msg === "failed"){
+                            Swal.fire({
+                                icon: 'error',
+                                title: '提醒',
+                                text: data.data,
+                            });
+                        }
+                        document.getElementById("result").innerHTML=data.data;
+                    })
+            }
+            function decryptSM4(){
+                var content = document.getElementById("content").value;
+                var key = document.getElementById("sm4key").value;
+                var iv = document.getElementById("iv").value;
+                if(content === "" || key === "" || iv === ""){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '提醒',
+                        text: '数据不能为空',
+                        allowOutsideClick:true
+                    });
+                    return;
+                }
+                var endata = {
+                    ciphertext:content,
+                    key:key,
+                    iv:iv,
+                    mode:modes
+                };
+                fetch("/api/desm4",{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify(endata),
+                    method:"POST"
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.msg === "failed"){
+                            Swal.fire({
+                                icon: 'error',
+                                title: '提醒',
+                                text: data.data,
+                            });
+                        }
+                        document.getElementById("result").innerHTML=data.data;
+                    })
+            }
+            function clearText(){
+                document.getElementById("result").innerHTML="";
+            }
+            function copyText() {
+                var copyText = document.getElementById("result").value;
+
+                navigator.clipboard.writeText(copyText)
+                    .then(function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '成功',
+                            text: '已复制到剪贴板',
+                        });
+                    })
+                    .catch(function(err) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '错误',
+                            text: '复制失败',
+                        });
+                    });
+            }
+        </script>
+
+<div class="layui-tab layui-tab-card">
+    <div class="layui-tab-content">
+        <p class="layui-elem-quote">
+            <b>工具简介</b>
+            <br />
+            在线国密SM4加解密测试工具
+            <br />
+            <b>SM4算法简介</b>
+            <br />
+            SM4.0（原名SMS4.0）是中华人民共和国政府采用的一种分组密码标准，由国家密码管理局于2012年3月21日发布。相关标准为“GM/T 0002-2012《SM4分组密码算法》（原SMS4分组密码算法）”。
+            <br />
+            在商用密码体系中，SM4主要用于数据加密，其算法公开，分组长度与密钥长度均为128bit，加密算法与密钥扩展算法都采用32轮非线性迭代结构，S盒为固定的8比特输入8比特输出。
+            <br />
+            SM4.0中的指令长度被提升到大于64K（即64×1024）的水平，这是SM 3.0规格（渲染指令长度允许大于512）的128倍。
+            <table class="layui-table">
+                <thead>
+                    <tr>
+                        <td style="width: 40px">
+                            <h3>序号</h3>
+                        </td>
+                        <td style="width: 100px">
+                            <h3>算法类型</h3>
+                        </td>
+                        <td style="width: 100px">
+                            <h3>国密算法</h3>
+                        </td>
+                        <td>
+                            <h3>应用范围及描述</h3>
+                        </td>
+                        <td>
+                            <h3>对应的国际算法</h3>
+                        </td>
+                        <td>
+                            <h3>补充</h3>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>非对称加密</td>
+                        <td>SM2</td>
+                        <td>身份认证，数据签名，密码交换，256位椭圆曲线</td>
+                        <td>RSA、RSA4096</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">2</td>
+                        <td rowspan="2">对称加密</td>
+                        <td>SM1</td>
+                        <td>128位数据加密，算法不公开，仅以IP核的形式存在于芯片中。智能IC卡、智能密码钥匙、加密卡、加密机。</td>
+                        <td rowspan="2">DES、3DES、AES(128)、AES192、AES256</td>
+                        <td rowspan="2">AES是取代DES的算法</td>
+                    </tr>
+                    <tr>
+                        <td>SM4</td>
+                        <td>128位数据加密，相当于AES(128)</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>完整性运算</td>
+                        <td>SM3</td>
+                        <td>256位数据摘要计算，相当于SHA256</td>
+                        <td>SHA1、SHA-256、SHA-384、SHA-512</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </p>
+    </div>
+</div>
+
+
+    </div>
+</div>
+
+
+    </div>
+    
+           
+
+    <script type="text/javascript">
+        //重设内容区域大小
+        resizeContent();
+        $(window).resize(resizeContent);
+
+        function resizeContent() {
+            var windowHeight = $(window).outerHeight() - 106;
+            var contentHeight = $('#wrapper>div').outerHeight();
+            if (contentHeight > windowHeight) {
+                //设置高度
+                $('#wrapper').css('height', '100%');
+            } else {
+                //设置高度
+                $('#wrapper').css('height', windowHeight);
+            }
+        }
+
+        $(function () {
+            $('#wrapper').on('DOMNodeInserted', resizeContent);
+            $('#wrapper').resize(resizeContent);
+        });
+    </script>
+
+    
+
+    <script>
+    $(function () {
+        //记录DOM加载完毕时间
+        window.loadPageRecords['END_DOM_LOAD'] = new Date();
+    });
+    $(window).load(function () {
+        //记录页面加载完毕时间
+        window.loadPageRecords['END_LOAD'] = new Date();
+        Log4.loadRecords({
+            ControllerName: 'encrypt',
+            ActionName: 'sm4',
+            Record: window.loadPageRecords
+        }); //提交记录日志
+        window.loadPageRecords = {};//清空记录
+    });
+    
+    window.addEventListener("beforeunload",
+        function (event) {
+            window.loadPageRecords['CLOSE'] = new Date();
+            Log4.loadRecords({
+                ControllerName: 'encrypt',
+                ActionName: 'sm4',
+                Record: window.loadPageRecords
+            }); //提交记录日志
+        });
+    
+    window.errorRecord = function(errorInfo) {
+        Log4.error(JSON.stringify(errorInfo));
+    }
+    
+    for (var i = 0; i < window.errorRecords.length; i++) {
+        window.errorRecord(window.errorRecords[i]);
+    }
+    layui.use('element',
+        function() {
+            var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+
+            //监听导航点击
+            element.on('nav(demo)',
+                function(elem) {
+                    //console.log(elem)
+                    layer.msg(elem.text());
+                });
+            //三级菜单
+            $(".menu-three").on("mouseover", function () {
+                var ol = $(this).find('ol');
+                //计算出三级菜单位置
+                ol.css('left', $(this).width() + 'px');
+                //删除隐藏标记
+                ol.removeAttr('hide');
+                //删除隐藏样式
+                ol.removeClass('three-hide');
+            }).on("mouseout",function () {
+                var ol = $(this).find('ol');
+                //打上隐藏标记
+                ol.attr('hide', true);
+                setTimeout(function () {
+                    //如果有隐藏标记则隐藏
+                    if (ol.attr('hide')) {
+                        ol.addClass('three-hide');
+                    }
+                },100);
+            });
+            $(".menu-three>ol").on("mouseover",function () {
+                //删除隐藏标记
+                $(this).removeAttr('hide');
+                //删除隐藏样式
+                $(this).removeClass('three-hide');
+            }).on("mouseout",function () {
+                var ol = $(this);
+                //打上隐藏标记
+                ol.attr('hide', true);
+                setTimeout(function () {
+                    //如果有隐藏标记则隐藏
+                    if (ol.attr('hide')) {
+                        ol.addClass('three-hide');
+                    }
+                },100);
+            });
+        });
+    
+    window.serverTimeDifference = 1701391187 - parseInt(Date.now() / 1000);
+    </script>
+    
+    
+
+    </body>
+</html>
