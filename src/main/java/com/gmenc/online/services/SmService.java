@@ -1,6 +1,7 @@
 package com.gmenc.online.services;
 
 import com.gmenc.online.mapper.Gmapper;
+import com.gmenc.online.pojo.AES;
 import com.gmenc.online.pojo.SM2Key;
 import com.gmenc.online.pojo.SM4Key;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,17 @@ public class SmService implements GmService{
     @Override
     public String encryptsm4(SM4Key sm4key) {
         return gmapper.encryptsm4(sm4key);
+    }
+
+
+
+    @Override
+    public String enAes(AES aes){
+        return gmapper.enAES(aes);
+    }
+
+    @Override
+    public String deAES(AES aes) {
+        return gmapper.deAES(aes);
     }
 }

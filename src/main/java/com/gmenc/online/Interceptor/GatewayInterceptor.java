@@ -19,6 +19,7 @@ public class GatewayInterceptor implements HandlerInterceptor {
             response.sendRedirect("/");
             return false;
         }
+
         return true;
     }
 

@@ -66,31 +66,42 @@
 <body>
 
 <div class="login-container">
-    <h2>Login</h2>
+    <h2>忘记密码</h2>
     <form id="loginForm">
         <input type="text" id="username" placeholder="用户名" required>
         <input type="password" id="password" placeholder="密码" required>
-        <button type="button" id="login"  onclick="submitForm()">Login</button>
+        <input type="password" id="newpassword" placeholder="确认密码" required>
+        <button type="button" id="login"  onclick="submitForm()">确认</button>
     </form>
     <p>
-        <a href="/forget">忘记密码</a>
+        <a href="#">忘记密码</a>
         <span>|</span>
         <a href="/register">注册</a>
     </p>
     <div id="error-message"></div>
 </div>
 <script>
+    var username = document.getElementById('username');
+    var password = document.getElementById('password');
+    var newpassword = document.getElementById('newpassword');
+    document.getElementById("loginForm").addEventListener("mouseover",function (){
+        // console.log(newpassword);
+        if(password.value !== newpassword.value){
+            document.getElementById("error-message").innerHTML="输入的两次密码不一致";
+        }else {
+            document.getElementById("error-message").innerHTML=""
+        }
+    });
     function submitForm() {
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
         // 构建 JSON 对象
         var data = {
-            username: username,
-            password: password
+            username: username.value,
+            password: password.value,
+            newpassword:newpassword.value
         };
 
         // 发送 JSON 数据
-        fetch('/api/login', {
+        fetch('/api/forget', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,16 +112,17 @@
             .then(data => {
                 if (data.msg === "success"){
                     // 登录成功，跳转到后台页面
-                    window.location.href = '/login/SM2';
+                    window.location.href = '/';
                 } else {
                     // 登录失败，可以显示错误消息或采取其他操作
-                    document.getElementById("error-message").innerHTML="用户名或密码错误";
+                    document.getElementById("error-message").innerHTML=data.data;
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
     }
+
 </script>
 
 </body>

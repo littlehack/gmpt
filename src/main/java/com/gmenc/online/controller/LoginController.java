@@ -79,4 +79,19 @@ public class LoginController {
         logger.info("用户名：" + user.getUsername() + "\t密码：" + EncryptPassword);
         return Result.sunccess("注册成功");
     }
+
+    /**
+     * 忘记密码
+     */
+
+    @RequestMapping("/forget")
+    public Result  ForgetPassword(@RequestBody User user){
+        String newpassword = SM4Utils.encryptHex_CBC(user.getNewpassword(),key,iv, SM4Utils.Padding.PKCS7);
+        int row =  jdbcTemplate.update("update admin set user_pass=? where user_name=?",newpassword,user.getUsername());
+        if(row == 0){
+            return Result.failed("用户名不存在");
+        }
+        logger.info("用户" + user.getUsername() + "密码变更为：" + user.getNewpassword());
+        return Result.sunccess("密码修改成功");
+    }
 }

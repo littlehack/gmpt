@@ -8,6 +8,7 @@
     <meta name="keywords" content="SM4加密,SM4解密,国密加密,国密解密,国密,SM2,SM1,SM3,SM4">
     <meta name="description" content="在线SM4国密加密/解密">
     <script src="../static/js/sweetalert2.all.min.js"></script>
+    <script src="../static/js/clipboard.min.js"></script>
     <script type="text/javascript">
         
         window.toolId = '';
@@ -245,7 +246,7 @@
             <div class="btn-box">
                 <button class="btn btn-primary control-button" id="encrypt" onclick="encryptSM4()">加密</button>
                 <button class="btn btn-primary control-button" id="decrypt" onclick="decryptSM4()">解密</button>
-                <button class="btn control-button" id="copy" onclick="copyText()">复制结果</button>
+                <button class="btn control-button" id="copy">复制结果</button>
                 <button class="btn control-button" id="clear" onclick="clearText()">清空</button>
             </div>
         </div>
@@ -336,25 +337,30 @@
             function clearText(){
                 document.getElementById("result").innerHTML="";
             }
-            function copyText() {
-                var copyText = document.getElementById("result").value;
+            //复制
+            var copyText = document.getElementById("copy");
+            var clipboard = new ClipboardJS(copyText,{
+                target:function (){
+                    return document.getElementById("result")
+                }
+            });
 
-                navigator.clipboard.writeText(copyText)
-                    .then(function() {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '成功',
-                            text: '已复制到剪贴板',
-                        });
-                    })
-                    .catch(function(err) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '错误',
-                            text: '复制失败',
-                        });
-                    });
-            }
+            clipboard.on('success', function (e) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '成功',
+                    text: '已复制到剪贴板',
+                });
+            })
+
+            clipboard.on('error',function (e){
+                Swal.fire({
+                    icon: 'error',
+                    title: '失败',
+                    text: '复制失败',
+                });
+            })
+
         </script>
 
 <div class="layui-tab layui-tab-card">

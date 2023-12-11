@@ -1,6 +1,7 @@
 package com.gmenc.online.controller;
 
 
+import com.gmenc.online.pojo.AES;
 import com.gmenc.online.pojo.Result;
 import com.gmenc.online.pojo.SM2Key;
 import com.gmenc.online.pojo.SM4Key;
@@ -45,6 +46,11 @@ public class DecryptController {
             logger.warning(e.toString());
             return Result.failed("解密失败，请重试");
         }
+    }
 
+    @RequestMapping("/deAES")
+    public Result deAES(@RequestBody AES aes){
+        String result = gmService.deAES(aes);
+        return Result.sunccess(result);
     }
 }

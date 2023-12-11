@@ -12,8 +12,8 @@ public class GatewayInterceptorConfig implements WebMvcConfigurer {
     @Autowired
     public GatewayInterceptor gatewayInterceptor;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(gatewayInterceptor).addPathPatterns("/login/**");
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(gatewayInterceptor).addPathPatterns("/login/**").excludePathPatterns("/api/**");
+//    }
 }

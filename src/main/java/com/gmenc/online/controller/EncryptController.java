@@ -1,6 +1,7 @@
 package com.gmenc.online.controller;
 
 
+import com.gmenc.online.pojo.AES;
 import com.gmenc.online.pojo.Result;
 import com.gmenc.online.pojo.SM2Key;
 import com.gmenc.online.pojo.SM4Key;
@@ -63,6 +64,13 @@ public class EncryptController {
             logger.warning(e.toString());
             return Result.failed("加密失败，请重试");
         }
+
+    }
+
+    @PostMapping("/enAes")
+    public Result enAES(@RequestBody AES aes){
+        String result = gmService.enAes(aes);
+        return Result.sunccess(result);
 
     }
 }

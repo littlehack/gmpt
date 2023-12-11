@@ -1,5 +1,6 @@
 package com.gmenc.online.services;
 
+import com.gmenc.online.pojo.AES;
 import com.gmenc.online.pojo.SM2Key;
 import com.gmenc.online.pojo.SM4Key;
 import org.springframework.stereotype.Component;
@@ -20,4 +21,7 @@ public interface GmService {
 
     String encryptsm4(SM4Key sm4key);
 
+    String enAes(AES aes);
+
+    String deAES(AES aes);
 }

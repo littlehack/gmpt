@@ -28,4 +28,13 @@ public class indexController {
         return "SM4";
     }
 
+    @RequestMapping("/login/AES")
+    public String AES(){
+        return "AES";
+    }
+    @RequestMapping("/forget")
+    public String forget(){
+        return "forget";
+    }
+
 }
