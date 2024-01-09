@@ -13,11 +13,14 @@ import java.util.Enumeration;
 public class GatewayInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Object object = request.getSession().getAttribute("users");
-        //简要判断用户是否登录
-        if(object == null){
-            response.sendRedirect("/");
-            return false;
+//        Object object = request.getSession().getAttribute("users");
+//        //简要判断用户是否登录
+//        if(object == null){
+//            response.sendRedirect("/");
+//            return false;
+//        }
+        if(request.getServletPath().equals("/error")){
+            response.sendRedirect("/login/SM2");
         }
 
         return true;

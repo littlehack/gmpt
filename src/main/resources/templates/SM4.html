@@ -3,6 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>在线SM4国密加密/国密加解密平台</title>
+    <link rel="icon" href="../static/image/favicon.ico" type="image/png">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="zh-CN">
     <meta name="keywords" content="SM4加密,SM4解密,国密加密,国密解密,国密,SM2,SM1,SM3,SM4">
@@ -182,9 +183,9 @@
                 <li >
                     <a href="/login/AES">AES</a>
                 </li>
-                <!-- <li >
-                    <a href="/TripleDES">TripleDES</a>
-                </li> -->
+                <li >
+                    <a href="/login/Edcode">编码解码</a>
+                </li>
             </ul>
         </div>
         
@@ -255,14 +256,20 @@
 
         <script>
             var option = document.getElementById("EncryptModel");
-            var modes = ""
+            var OutputDataTypeOPtions = document.getElementById("OutputDataType");
+            var modes = "";
+            var OutputDataType = "";
             window.onchange = function (){
-                modes = option.value;}
+                modes = option.value;
+                OutputDataType = OutputDataTypeOPtions.value;
+            }
+
             function encryptSM4(){
+                // console.log(OutputDataType)
                 var content = document.getElementById("content").value;
                 var key = document.getElementById("sm4key").value;
                 var iv = document.getElementById("iv").value;
-                if(content === "" || key === "" || iv === ""){
+                if(content === "" && key === "" || iv === ""){
                     Swal.fire({
                         icon: 'warning',
                         title: '提醒',
@@ -271,11 +278,21 @@
                     });
                     return;
                 }
+                if(key.length < 16 && OutputDataType === "Base64"){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '提醒',
+                        text: 'Base64格式的密文需要填充16个字符长度的key和iv',
+                        allowOutsideClick: true
+                    });
+                    return;
+                }
                 var endata = {
-                    plantext:content,
+                    planText:content,
                     key:key,
                     iv:iv,
-                    mode:modes
+                    mode:modes,
+                    outputType:OutputDataType
                 };
                 fetch("/api/ensm4",{
                     headers:{
@@ -313,7 +330,8 @@
                     ciphertext:content,
                     key:key,
                     iv:iv,
-                    mode:modes
+                    mode:modes,
+                    outputType:OutputDataType
                 };
                 fetch("/api/desm4",{
                     headers:{

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title>编码解码</title>
+    <link rel="icon" href="../static/image/favicon.ico" type="image/png">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Language" content="zh-CN">
+    <meta name="keywords" content="SM4加密,SM4解密,国密加密,国密解密,国密,SM2,SM1,SM3,SM4">
+    <meta name="description" content="在线SM4国密加密/解密">
+    <script src="../static/js/sweetalert2.all.min.js"></script>
+    <script src="../static/js/clipboard.min.js"></script>
+    <script type="text/javascript">
+
+        window.toolId = '';
+
+        window.loginUser = null;
+
+        window.loadPageRecords = {};
+
+        window.errorRecords = [];
+
+
+        window.errorRecord = function(errorInfo) {
+            errorRecords.push(errorInfo);
+        };
+
+        window.loadPageRecords['START_LOAD_DOM'] = new Date();
+
+
+        window.onerror = function (msg, url, line, col, error) {
+            function getEd() {
+                try {
+                    if (!window._edf) return "[NoneEdf]";
+                    return JSON.parse(JSON.stringify(window._edf.log()));
+                } catch (e) {
+                    return "[EdfError]=>" + JSON.stringify(e);
+                }
+            }
+            window.errorRecord({
+                msg: msg,
+                url: url,
+                line: line,
+                col: col,
+                error: cvtError(error),
+                viewUrl: window.location.href,
+                ed: getEd()
+            });
+            return true;
+        }
+
+        function cvtError(error) {
+            if (!error) return '';
+            if (typeof (error) == 'string') return error;
+            return {
+                description: error.description,
+                fileName: error.fileName,
+                lineNumber: error.lineNumber,
+                message: error.message,
+                name: error.name,
+                number: error.number,
+                stack: error.stack
+            };
+        }
+
+    </script>
+
+    <style type="text/css">
+        .pr {
+            position: relative;
+        }
+
+        .text {
+            border-radius: 0 !important;
+            box-sizing: border-box;
+            display: block;
+            font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #333;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        .text textarea {
+            width: 100% !important;
+            border: 1px solid #c6cede !important;
+            height: 300px;
+            font-size: 16px;
+        }
+
+        .text b {
+            color: #c0c1c4;
+            font-family: "Microsoft YaHei";
+            font-size: 14px;
+            font-weight: normal;
+            left: 13px;
+            letter-spacing: normal;
+            margin-top: 10px;
+            position: absolute;
+            top: 0;
+            z-index: 0;
+            font-size: 16px;
+        }
+
+        strong {
+            color: black;
+        }
+
+        .icon-bars:before, .icon-reorder:before {
+            content: '≡≡';
+        }
+
+        .resize-div {
+            width: 100%;
+            position: absolute;
+            background-color: #f6f6f6;
+            cursor: n-resize;
+            box-sizing: content-box;
+            -webkit-box-sizing: content-box;
+            text-align: center;
+            top: 100%;
+            border: 1px solid #ddd;
+            left: -1px;
+        }
+        .control-button {
+            width: 100%;
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 18px;
+            height: 35px;
+        }
+    </style>
+
+    <style type="text/css">
+        .layui-table td {
+            text-align: center
+        }
+
+        .lable-title {
+            margin-bottom: 5px;
+        }
+
+        .setting label > select {
+            margin-top: 2px;
+        }
+    </style>
+
+
+
+    <link href="../static/css/1.css" rel="stylesheet"/>
+
+</head>
+<body>
+<div style="float: right;    padding-top: 20px;padding-right: 10px;">
+    <a style="z-index: 9999; cursor: pointer; color: rgba(255, 255, 255, .7);position: relative;" title="LZL在线工具:登录或注册账号" id="loginOrRegister">登录/注册</a>
+</div>
+</div>
+
+<div>
+
+    <div id="wrapper">
+        <div class="wrapper">
+            <div class="wrapper ad-wrap" style="margin-top: 15px"></div>
+            <div class="toolsTab  clearfix">
+                <ul class="nav nav-tabs">
+                    <li >
+                        <a href="/login/SM2">SM2</a>
+                    </li>
+                    <li >
+                        <a href="/login/SM3">SM3</a>
+                    </li>
+                    <li >
+                        <a href="/login/SM4">SM4</a>
+                    </li>
+                    <li >
+                        <a href="/login/DES">DES</a>
+                    </li>
+                    <li >
+                        <a href="/login/AES">AES</a>
+                    </li>
+                    <li class=active>
+                        <a href="/login/Edcode">编码解码</a>
+                    </li>
+                </ul>
+            </div>
+
+
+
+            <div class="layui-tab layui-tab-card" lay-filter="box">
+                <div class="layui-tab-content" style="display: flex">
+                    <div style="width: 900px">
+                        <b>编码/解码内容</b>
+                        <textarea placeholder="编码/解码内容" style="margin: 0px 0px 20px; height: 120px; width: 95%; max-width: 95%; margin-top: 5px;" id="content"></textarea>
+                        <div>
+                                <b>编码/解码结果：</b>
+                                <textarea placeholder="编码/解码结果" style="margin: 0px 0px 20px; height: 120px; width: 95%; max-width: 95%; margin-top: 5px;" id="result" readonly="readonly"></textarea>
+
+                        </div>
+                    </div>
+                    <div style="width: 220px" class="setting">
+                        <label>
+                            <b>编码格式</b>
+                            <select id="InputDataType">
+                                <option value="Base64" selected="selected">Base64</option>
+                                <option value="Hex">Hex</option>
+                                <option value="Unicode">Unicode</option>
+                                <option value="URL">URL</option>
+                            </select>
+                        </label>
+
+                        <div class="btn-box">
+                            <button class="btn btn-primary control-button" id="encode" onclick="encode()">编码</button>
+                            <button class="btn btn-primary control-button" id="decode" onclick="decode()">解码</button>
+                            <button class="btn control-button" id="copy">复制结果</button>
+                            <button class="btn control-button" id="clear" onclick="clearText()">清空</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                    var option = document.getElementById("InputDataType");
+                    var mode = "";
+                    window.onchange = function (){
+                        mode = option.value;
+                    }
+                    function encode(){
+                        if(mode === "Base64"){
+                            document.getElementById("result").innerText = btoa(document.getElementById("content").value);
+                        }
+                        if(mode === "Hex"){
+                            let str = document.getElementById("content").value;
+                            let hexStr = '';
+                            for (let i = 0; i < str.length; i++) {
+                                hexStr += str.charCodeAt(i).toString(16);
+                            }
+                            document.getElementById("result").innerText = hexStr
+                        }
+                        if(mode === "URL"){
+                            document.getElementById("result").innerText = encodeURIComponent(document.getElementById("content").value);
+                        }
+                        if(mode === "Unicode"){
+                            function unicodeEncode(str) {
+                                return [...str]
+                                    .map(char => (char.length > 1 ? '\\u{' + char.codePointAt(0).toString(16).toUpperCase() + '}' : char))
+                                    .join('');
+                            }
+                            document.getElementById("result").innerText = unicodeEncode(document.getElementById("content").value);
+                        }
+                    }
+                    function decode(){
+                        if(mode === "Base64"){
+                            document.getElementById("result").innerText = atob(document.getElementById("content").value);
+                        }
+                        if(mode === "Hex"){
+                            function hexToString(hex) {
+                                var str = '';
+                                for (var i = 0; i < hex.length; i += 2) {
+                                    var hexCode = parseInt(hex.substr(i, 2), 16);
+                                    str += String.fromCharCode(hexCode);
+                                }
+                                return str;
+                            }
+                            document.getElementById("result").innerText = hexToString(document.getElementById("content").value);
+                        }
+
+                        if(mode === "URL"){
+                            document.getElementById("result").innerText = decodeURIComponent(document.getElementById("content").value);
+                        }
+                        if(mode === "Unicode"){
+                            function unicodeDecode(str) {
+                                return str.replace(/\\u[\dA-Fa-f]{4}/g, match =>
+                                    String.fromCharCode(parseInt(match.slice(2), 16))
+                                );
+                            }
+                            document.getElementById("result").innerText = unicodeDecode(document.getElementById("content").value);
+                        }
+                    }
+
+                    //复制
+                    var copyText = document.getElementById("copy");
+                    var clipboard = new ClipboardJS(copyText,{
+                        target:function (){
+                            return document.getElementById("result")
+                        }
+                    });
+
+                    clipboard.on('success', function (e) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '成功',
+                            text: '已复制到剪贴板',
+                        });
+                    })
+
+                    clipboard.on('error',function (e){
+                        Swal.fire({
+                            icon: 'error',
+                            title: '失败',
+                            text: '复制失败',
+                        });
+                    })
+            </script>
+
+</body>
+
+</html>

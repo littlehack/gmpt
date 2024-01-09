@@ -37,4 +37,9 @@ public class indexController {
         return "forget";
     }
 
+    @RequestMapping("/login/Edcode")
+    public String Encode(){
+        return "Encode";
+    }
+
 }

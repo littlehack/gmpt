@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 @Controller
@@ -61,7 +62,6 @@ public class EncryptController {
             String Ciphertext = gmService.encryptsm4(sm4key);
             return Result.sunccess(Ciphertext);
         }catch (Exception e){
-            logger.warning(e.toString());
             return Result.failed("加密失败，请重试");
         }
 
